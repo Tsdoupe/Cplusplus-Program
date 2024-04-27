@@ -1,0 +1,147 @@
+/*
+ * Project_Three_Doupe.cpp
+ *
+ *  Date: 4/19/2024
+ *  Author: Tyler Doupe
+ */
+
+#include <iostream>
+#include <fstream>
+#include <map>
+#include <string>
+
+using namespace std;
+
+class CornerGrocer {
+private:
+    // Maps item frequencies
+    map<string, int> frequencyMap;
+
+    // Given file names for input and backup files
+    const string inputFileName = "CS210_Project_Three_Input_File.txt";
+    const string backupFileName = "frequency.dat";
+
+public:
+    // Initializes the class CornerGrocer to load the input file and create the backup file
+    CornerGrocer() {
+        loadInputFile();
+        createBackupFile();
+    }
+
+    // Load input file and update frequency map based off input file
+    void loadInputFile() {
+        ifstream inputFile(inputFileName);
+        // If input file does not open, provide error message and exit program
+        if (!inputFile) {
+            cout << "Error: Could not open input file!" << endl;
+            exit(1);
+        }
+
+        string item;
+        // Read each item in the input list and update the frequencyMap accordingly
+        while (inputFile >> item) {
+            frequencyMap[item]++;
+        }
+        // Closes the input file
+        inputFile.close();
+    }
+
+    // Create a backup file
+    void createBackupFile() {
+        ofstream backupFile(backupFileName);
+        // If backupfile can not be created, provide error message and exit program
+        if (!backupFile) {
+            cout << "Error: Could not create backup file!" << endl;
+            exit(1);
+        }
+
+        // Populate the backup file with the frrequency map data
+        for (const auto& pair : frequencyMap) {
+            backupFile << pair.first << " " << pair.second << endl;
+        }
+        // Close the backup file
+        backupFile.close();
+    }
+
+    // Menu option 1: Prompt user for item they are looking for and output the item's frequency
+    void option1() {
+        cout << "Enter the item you want to look for: ";
+        string item;
+        cin >> item;
+
+        // Checks if item searched is a valid input. If yes then the frequency is provided. If no then it states the item cant be found
+        if (frequencyMap.find(item) != frequencyMap.end()) {
+            cout << "The frequency of " << item << " is " << frequencyMap[item] << endl;
+        } else {
+            cout << "Item not found." << endl;
+        }
+    }
+
+    // Menu option 2: Output all items and their frequencies
+    void option2() {
+        cout << "Item Frequencies:" << endl;
+        // A for loop to check all items in the frequency map and provides the item and its frequency
+        for (const auto& pair : frequencyMap) {
+            cout << pair.first << ": " << pair.second << endl;
+        }
+    }
+
+    // Menu option 3: Output a histogram of the item frequencies
+    void option3() {
+        cout << "Histogram of Item Frequencies:" << endl;
+        // Loops through the entire frequency map to ouput each item name
+        for (const auto& pair : frequencyMap) {
+            cout << pair.first << ": ";
+            // Loops through the frequency map to provide an asterisks for each instance the item appears in the frequency map
+            for (int i = 0; i < pair.second; i++) {
+                cout << "*";
+            }
+            cout << endl;
+        }
+    }
+
+    // Main menu
+    void menu() {
+        int choice;
+        // Displays menu options and prompts user to input one of the values
+        do {
+            cout << endl << "Menu:" << endl;
+            cout << "1. Look up frequency of an item" << endl;
+            cout << "2. Print list of all items and frequencies" << endl;
+            cout << "3. Print histogram of item frequencies" << endl;
+            cout << "4. Exit" << endl;
+            cout << "Enter your choice: ";
+            cin >> choice;
+
+            // Switch statement that allows for inputted value to execute the menu option
+            switch (choice) {
+                case 1:
+                    option1();
+                    break;
+                case 2:
+                    option2();
+                    break;
+                case 3:
+                    option3();
+                    break;
+                case 4:
+                    cout << "Exiting program..." << endl;
+                    break;
+                default:
+                    cout << "Invalid choice. Please try again." << endl;
+                    break;
+            }
+        // Loop to prompt user for a valid input (1 - 4) is continued until they select option 4 to exit program
+        } while (choice != 4);
+    }
+};
+
+// Main function
+int main() {
+    // Creates an instance of CornerGrocer
+    CornerGrocer cg;
+    // Runs the main menu function for the program
+    cg.menu();
+
+    return 0;
+}
